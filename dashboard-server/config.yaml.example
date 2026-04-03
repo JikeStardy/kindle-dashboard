@@ -1,0 +1,61 @@
+dashboard:
+  server:
+    port: 15000
+    host: "0.0.0.0"
+  location:
+    latitude: 22.52935041976462
+    longitude: 113.94669211479524
+    city_name: "Shenzhen"
+    timezone: "Asia/Shanghai"
+  screen:
+    width: 800
+    height: 600
+  pages:
+    default_page: "default"
+    pages_default_path: "pages_default.json"
+    pages: {}
+  renderer:
+    render_timeout: 60000
+  locale:
+    language: "CN"
+    holiday_country: "CN"
+  clock:
+    clock_format: "%H:%M"
+  cache_ttl:
+    weather: 600
+    finance: 900
+    news: 300
+    render: 60
+  work:
+    start_hour: 10
+    end_hour: 18
+  news:
+    external_url: ""
+  finance:
+    tickers:
+      - symbol: "SGDCNY=X"
+        name: "SGD/CNY"
+      - symbol: "CNY=X"
+        name: "USD/CNY"
+      - symbol: "BTC-USD"
+        name: "BTC/USD"
+
+ink_setting:
+  img_url: "http://127.0.0.1:15000/render"
+  interval: 300
+  full_refresh_cycle: 12
+  base_dir: "/mnt/us/extensions/Kindle-Dashboard"
+  tmp_file: "/tmp/dashboard_download.png"
+  log_file: "/tmp/dashboard.log"
+  safety_lock: "/mnt/us/STOP_DASH"
+  ping_target: "223.5.5.5"
+  rotate: 3
+  enable_local_clock: 1
+  clock_x: 40
+  clock_y: 295
+  clock_size: 80
+  clock_font: "/mnt/us/extensions/Kindle-Dashboard/IBMPlexMono-SemiBold.ttf"
+  time_format: 12
+  max_fail_count: 6
+  wifi_interface: "wlan0"
+  settings_path: "/api/ink_setting"

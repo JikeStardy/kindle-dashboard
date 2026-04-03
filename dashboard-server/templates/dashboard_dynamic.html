@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kindle Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --screen-width: {{ page.design.width }}px;
+            --screen-height: {{ page.design.height }}px;
+            --gap: {{ page.grid.gap }}px;
+            --bg: {{ page.theme.bg }};
+            --panel-bg: {{ page.theme.panel_bg }};
+            --text: {{ page.theme.text }};
+            --muted: {{ page.theme.muted }};
+            --font: {{ page.theme.font }};
+            --font-scale: {{ page.theme.font_scale | default(1.0) }};
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: var(--screen-width);
+            height: var(--screen-height);
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            overflow: hidden;
+        }
+
+        .grid {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            gap: var(--gap);
+            grid-template-columns: {{ grid_cols }};
+            grid-template-rows: {{ grid_rows }};
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            padding: calc(20px * var(--font-scale));
+            overflow: hidden;
+        }
+
+        .title {
+            font-size: calc(42px * var(--font-scale));
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .stack {
+            display: flex;
+            flex-direction: column;
+            gap: calc(12px * var(--font-scale));
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: calc(12px * var(--font-scale));
+        }
+
+        .weather-temp {
+            font-size: calc(92px * var(--font-scale));
+            font-weight: 900;
+            line-height: 0.9;
+        }
+
+        .weather-desc {
+            font-size: calc(36px * var(--font-scale));
+            font-weight: 700;
+        }
+
+        .clock-time {
+            font-size: calc(96px * var(--font-scale));
+            font-weight: 900;
+            letter-spacing: 0.04em;
+        }
+
+        .clock-label {
+            font-size: calc(24px * var(--font-scale));
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+        }
+
+        .meta {
+            font-size: calc(24px * var(--font-scale));
+            font-weight: 700;
+        }
+
+        .news-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: calc(16px * var(--font-scale));
+            padding: calc(10px * var(--font-scale)) 0;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .news-item:last-child {
+            border-bottom: 0;
+        }
+
+        .news-title {
+            font-size: calc(30px * var(--font-scale));
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .finance-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: calc(12px * var(--font-scale)) 0;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .finance-item:last-child {
+            border-bottom: 0;
+        }
+
+        .trending-item {
+            padding: calc(10px * var(--font-scale)) 0;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .trending-item:last-child {
+            border-bottom: 0;
+        }
+
+        .repo-name {
+            font-size: calc(30px * var(--font-scale));
+            font-weight: 900;
+        }
+
+        .finance-price {
+            font-size: calc(40px * var(--font-scale));
+            font-weight: 900;
+        }
+
+        .badge {
+            padding: calc(6px * var(--font-scale)) calc(10px * var(--font-scale));
+            font-size: calc(22px * var(--font-scale));
+            font-weight: 700;
+            border: 2px solid #111827;
+        }
+
+        .badge.positive {
+            background: #111827;
+            color: #ffffff;
+        }
+
+        .badge.negative {
+            background: transparent;
+            color: #111827;
+        }
+
+        .slot {
+            position: relative;
+        }
+
+        .slot .placeholder {
+            font-size: calc(28px * var(--font-scale));
+            font-weight: 700;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="grid">
+        {% for cell in page.cells %}
+        <div
+            class="panel slot"
+            style="grid-row: {{ cell.row }} / span {{ cell.row_span }}; grid-column: {{ cell.col }} / span {{ cell.col_span }};"
+            data-component="{{ cell.component }}"
+            data-options='{{ (cell.options or {}) | tojson }}'
+        >
+            <div class="placeholder">Loading...</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        const pageId = {{ page_id | tojson }};
+
+        const renderers = {
+            clock: (data) => {
+                const clock = data.clock || {};
+                const time = clock.time || "--:--";
+                return `
+                    <div class="stack" style="align-items: center; justify-content: center; height: 100%;">
+                        <div class="clock-label muted">Time</div>
+                        <div class="clock-time">${time}</div>
+                    </div>
+                `;
+            },
+            weather: (data) => {
+                const w = data.weather || {};
+                const current = w.current || {};
+                const location = (w.location && w.location.name) || "--";
+                return `
+                    <div class="stack">
+                        <div class="row">
+                            <div class="title">${location}</div>
+                            <div class="meta muted">${current.high_low || ""}</div>
+                        </div>
+                        <div class="row">
+                            <div class="weather-temp">${current.temp ?? "--"}°</div>
+                            <div class="stack" style="align-items: flex-end;">
+                                <div class="weather-desc">${current.desc || ""}</div>
+                                <div class="meta muted">${current.humidity || "--"} · ${current.rain_chance || "--"}</div>
+                                <div class="meta muted">UV ${current.uv ?? "--"} · AQI ${current.aqi ?? "--"}</div>
+                            </div>
+                        </div>
+                        <div class="meta muted">${current.alert || ""}</div>
+                    </div>
+                `;
+            },
+            calendar: (data) => {
+                const c = data.calendar || {};
+                const next = c.next_day || null;
+                return `
+                    <div class="stack">
+                        <div class="title">${c.date_str || "--"}</div>
+                        <div style="font-size: 64px; font-weight: 900; line-height: 1;">${c.weekday || "--"}</div>
+                        <div class="meta muted">${c.lunar || ""}</div>
+                        ${next ? `
+                        <div class="stack" style="margin-top: 16px;">
+                            <div class="meta muted">${next.name || ""}</div>
+                            <div style="font-size: 48px; font-weight: 900;">${next.date || ""}</div>
+                        </div>
+                        ` : ""}
+                    </div>
+                `;
+            },
+            news: (data, options) => {
+                const limit = (options && options.limit) || 5;
+                const items = (data.news || []).slice(0, limit);
+                if (!items.length) {
+                    return `<div class="placeholder">No news</div>`;
+                }
+                return items.map((item, idx) => `
+                    <div class="news-item">
+                        <div class="news-title">${item.is_external ? "" : `${idx + 1}. `}${item.title || ""}</div>
+                        <div class="meta muted" style="min-width: 60px; text-align: right;">${item.meta || item.score || ""}</div>
+                    </div>
+                `).join("");
+            },
+            finance: (data, options) => {
+                const limit = (options && options.limit) || 3;
+                const items = (data.finance || []).slice(0, limit);
+                if (!items.length) {
+                    return `<div class="placeholder">No finance data</div>`;
+                }
+                return items.map((item) => {
+                    const change = Number(item.change || 0);
+                    const badgeClass = change >= 0 ? "positive" : "negative";
+                    const arrow = change >= 0 ? "▲" : "▼";
+                    return `
+                        <div class="finance-item">
+                            <div>
+                                <div class="meta muted">${item.name || ""}</div>
+                                <div class="finance-price">${item.price || "--"}</div>
+                            </div>
+                            <div class="badge ${badgeClass}">${arrow} ${Math.abs(change).toFixed(2)}%</div>
+                        </div>
+                    `;
+                }).join("");
+            },
+            github_trending: (data, options) => {
+                const limit = (options && options.limit) || 5;
+                const items = (data.github_trending || []).slice(0, limit);
+                if (!items.length) {
+                    return `<div class="placeholder">No trending</div>`;
+                }
+                return items.map((item, idx) => {
+                    const stars = item.stars ? `★ ${item.stars}` : "";
+                    const starsToday = item.stars_today ? `+${item.stars_today}` : "";
+                    return `
+                        <div class="trending-item">
+                            <div class="row">
+                                <div class="repo-name">${idx + 1}. ${item.name || ""}</div>
+                                <div class="meta muted">${stars} ${starsToday}</div>
+                            </div>
+                            <div class="meta muted">${item.description || ""}</div>
+                        </div>
+                    `;
+                }).join("");
+            }
+        };
+
+        function renderAll(data) {
+            const slots = document.querySelectorAll(".slot");
+            slots.forEach((slot) => {
+                const component = slot.dataset.component;
+                const options = slot.dataset.options ? JSON.parse(slot.dataset.options) : {};
+                if (renderers[component]) {
+                    slot.innerHTML = renderers[component](data, options);
+                } else {
+                    slot.innerHTML = `<div class="placeholder">Unknown component: ${component}</div>`;
+                }
+            });
+        }
+
+        fetch(`/api/data?page=${encodeURIComponent(pageId)}`)
+            .then((resp) => resp.json())
+            .then((data) => renderAll(data))
+            .catch(() => {
+                const slots = document.querySelectorAll(".slot");
+                slots.forEach((slot) => {
+                    slot.innerHTML = `<div class="placeholder">Failed to load data</div>`;
+                });
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+    "items": [
+        {
+            "name": "Kindle-Dashboard",
+            "priority": 100,
+            "items": [
+                {
+                    "name": "Start Dashboard (No GUI)",
+                    "priority": 1,
+                    "action": "/mnt/us/extensions/Kindle-Dashboard/bin/boot.sh"
+                }
+            ]
+        }
+    ]
+}

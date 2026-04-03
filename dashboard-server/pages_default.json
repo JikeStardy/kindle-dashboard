@@ -1,0 +1,21 @@
+{
+  "default": {
+    "name": "kindle_600x800",
+    "design": {"width": 600, "height": 800},
+    "grid": {"columns": [2, 1], "rows": [1, 1, 1, 1], "gap": 4},
+    "theme": {
+      "bg": "#000000",
+      "panel_bg": "#FFFFFF",
+      "text": "#000000",
+      "muted": "#6B7280",
+      "font": "'Noto Sans SC', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      "font_scale": 0.7
+    },
+    "cells": [
+      {"id": "weather", "row": 1, "col": 1, "row_span": 1, "col_span": 1, "component": "weather"},
+      {"id": "clock", "row": 2, "col": 1, "row_span": 1, "col_span": 1, "component": "clock"},
+      {"id": "calendar", "row": 1, "col": 2, "row_span": 2, "col_span": 1, "component": "calendar"},
+      {"id": "news", "row": 3, "col": 1, "row_span": 2, "col_span": 2, "component": "news", "options": {"limit": 8}}
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+    "img_url": "http://192.168.10.236:15000/render",
+    "interval": 300,
+    "full_refresh_cycle": 12,
+    "base_dir": "/mnt/us/extensions/Kindle-Dashboard",
+    "tmp_file": "/tmp/dashboard_download.png",
+    "log_file": "/tmp/dashboard.log",
+    "safety_lock": "/mnt/us/STOP_DASH",
+    "ping_target": "223.5.5.5",
+    "rotate": 3,
+    "enable_local_clock": 1,
+    "clock_x": 40,
+    "clock_y": 295,
+    "clock_size": 80,
+    "clock_font": "/mnt/us/extensions/Kindle-Dashboard/IBMPlexMono-SemiBold.ttf",
+    "time_format": 12,
+    "max_fail_count": 6,
+    "wifi_interface": "wlan0",
+    "settings_path": "/api/ink_setting"
+}
